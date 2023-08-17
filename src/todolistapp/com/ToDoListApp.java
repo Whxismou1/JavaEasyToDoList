@@ -31,6 +31,7 @@ public class ToDoListApp {
 					userRegister(sc, conexion);
 					break;
 				case 0:
+					System.out.println("Saliendo....");
 					System.exit(0);
 				default:
 					System.out.println("Invalid choice.");
@@ -65,10 +66,10 @@ public class ToDoListApp {
 				
 				String sql = "INSERT INTO todo_list.users (username, password) VALUES (?, ?);";
 				
+				
 				state = connection.prepareStatement(sql);
 				state.setString(1, userIntroduced);
 				state.setString(2, passwordIntroduced);
-				
 				state.executeUpdate();
 				state.close();
 				
@@ -105,9 +106,10 @@ public class ToDoListApp {
 
 					User user = new User(id, usernameBD, passwordBD);
 					System.out.println("Login successful. Welcome, " + user.getUsername());
+
 					
-					UITaskMenu taskMenu = new UITaskMenu();
-					taskMenu.printTaskMenu();
+					TaskMenu task = new TaskMenu();
+					task.start(user);
 					
 					
 				} else {
