@@ -1,3 +1,7 @@
+/***
+ * @author Whxismou
+ */
+
 package todolistapp.com;
 
 import java.sql.Connection;
@@ -6,11 +10,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Scanner;
 
-public class ToDoListApp {
+/***
+ * 
+ * Clase encargada de la ejecucion principal del programa como las funciones de
+ * impresion, login y register
+ *
+ */
+public class ToDoListAppMain {
 	private static final String JDBC_URL = "jdbc:mysql://localhost:3306/todo_list";
 	private static final String JDBC_USER = "root2";
 	private static final String JDBC_PASSWORD = "";
 
+	/***
+	 * 
+	 * Metodo main que tiene el bucle principal de la app
+	 */
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
 		Menu menu = new Menu();
@@ -46,42 +60,58 @@ public class ToDoListApp {
 
 	}
 
+	/***
+	 * Metodo encargado de ejecutar la funcion de register usando las querys a BBDD
+	 * y los parametros que recibe. En caso de que el usuario ya exista no se guarda
+	 * de nuevo
+	 * 
+	 * @param sc
+	 * @param connection
+	 * 
+	 */
 	private static void userRegister(Scanner sc, Connection connection) {
 		System.out.println("\n\n******Register Menu******");
 		System.out.print("Username: ");
 		String userIntroduced = sc.nextLine();
-		
+
 		String query = "SELECT id, username FROM users WHERE username = ?";
-		
+
 		try {
 			PreparedStatement state = connection.prepareStatement(query);
 			state.setString(1, userIntroduced);
 			ResultSet rs = state.executeQuery();
-			
-			if(rs.next()) {
+
+			if (rs.next()) {
 				System.out.println("ERROR: El usuario ya existe!");
-			}else {
+			} else {
 				System.out.print("Password: ");
 				String passwordIntroduced = sc.nextLine();
-				
+
 				String sql = "INSERT INTO todo_list.users (username, password) VALUES (?, ?);";
-				
-				
+
 				state = connection.prepareStatement(sql);
 				state.setString(1, userIntroduced);
 				state.setString(2, passwordIntroduced);
 				state.executeUpdate();
 				state.close();
-				
+
 				System.out.println("Usuario registrado correctamente!");
 			}
-			
-			
-			
+
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 	}
+
+	/***
+	 * Metodo encargado de ejecutar la funcion de login usando las querys a BBDD y
+	 * los parametros que recibe. En caso de que el usuario no exista se hace saber
+	 * al user
+	 * 
+	 * @param sc
+	 * @param connection
+	 * 
+	 */
 
 	private static void userLogin(Scanner sc, Connection connection) throws InterruptedException {
 
@@ -107,11 +137,9 @@ public class ToDoListApp {
 					User user = new User(id, usernameBD, passwordBD);
 					System.out.println("Login successful. Welcome, " + user.getUsername());
 
-					
 					TaskMenu task = new TaskMenu();
 					task.start(user);
-					
-					
+
 				} else {
 					System.out.println("Invalid username or password!\n\n");
 
